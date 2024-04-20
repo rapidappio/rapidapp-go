@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package postgres;
+
+option go_package = "github.com/rapidappio/rapidapp-go/postgres";
+
+message CreateRequest {
+  string name = 1;
+}
+
+message Postgres {
+  string id          = 1;
+  string name        = 2;
+  string username    = 3;
+  string password    = 4;
+  string database    = 5;
+  string host        = 6;
+  uint32 port        = 10;
+  string status      = 7;
+  string error_reason = 8;
+  Cmd cmd = 9;
+}
+
+message Cmd {
+  string cli = 1;
+  string go = 2;
+  string java = 3;
+}
+
+message PostgresList {
+  repeated Postgres items = 1;
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message DeleteRequest {
+  string id = 1;
+}
+
+message PostgresId {
+  string id = 1;
+}
+
+service PostgresService {
+  rpc Create(CreateRequest) returns (PostgresId) {}
+  rpc List(google.protobuf.Empty) returns (PostgresList) {}
+  rpc Get(GetRequest) returns (Postgres) {}
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty) {}
+}
