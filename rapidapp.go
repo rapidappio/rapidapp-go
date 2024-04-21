@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 )
 
@@ -48,6 +49,14 @@ func (c *Client) DeletePostgresDatabase(id string) error {
 
 func (c *Client) GetPostgresDatabase(id string) (*postgres.Postgres, error) {
 	return c.PostgresDatabases.Get(c.newCtx(), &postgres.GetRequest{Id: id})
+}
+
+func (c *Client) ListPostgresDatabases() ([]*postgres.Postgres, error) {
+	list, err := c.PostgresDatabases.List(c.newCtx(), &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	return list.Items, nil
 }
 
 func (c *Client) newCtx() context.Context {
