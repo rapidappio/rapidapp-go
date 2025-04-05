@@ -2,17 +2,20 @@ package rapidapp
 
 import (
 	"context"
-	"github.com/rapidappio/rapidapp-go/pkg/proto/postgres"
+	"crypto/tls"
+	"log"
+
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"log"
+
+	"github.com/rapidappio/rapidapp-go/pkg/proto/postgres"
 )
 
 const (
-	// apiUrl = "api-dev.rapidapp.io:443"
-	apiUrl = "localhost:8080"
+	apiUrl = "api.rapidapp.io:443"
+	// apiUrl = "localhost:8080"
 )
 
 type Client struct {
@@ -21,8 +24,8 @@ type Client struct {
 }
 
 func NewClient(apiKey string) *Client {
-	// conn, err := grpc.Dial(apiUrl, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
-	conn, err := grpc.Dial(apiUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(apiUrl, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
+	// conn, err := grpc.Dial(apiUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -37,7 +40,6 @@ func (c *Client) CreatePostgresDatabase(name string) (string, error) {
 	id, err := c.PostgresDatabases.Create(c.newCtx(), &postgres.CreateRequest{Name: name})
 	if err != nil {
 		return "", err
-
 	}
 	return id.Id, err
 }
